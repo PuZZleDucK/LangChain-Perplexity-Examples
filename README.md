@@ -1,5 +1,10 @@
 # LangChain Perplexity Examples
 
+## Example apps
+* 01-perplexity-single-shot.py - Prompt the user for a single round chat
+* 02-perplexity-chain.py - Chain user input during a chat until the user exits
+* 03-perplexity-multi-character.py- An automated chat between two ai agents
+
 ## Dev setup
 ```
 source .venv/bin/activate .venv
