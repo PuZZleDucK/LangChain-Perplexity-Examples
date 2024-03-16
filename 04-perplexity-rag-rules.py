@@ -9,7 +9,12 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from typing import Dict
+from langchain_core.runnables import RunnablePassthrough
 dotenv.load_dotenv()
+
+def parse_retriever_input(params: Dict):
+    return params["messages"][-1].content
 
 loader = WebBaseLoader("https://wahapedia.ru/wh40k10ed/the-rules/core-rules/")
 data = loader.load()
@@ -25,10 +30,7 @@ vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbedd
 
 print(f"Vectors ({len(vectorstore.embeddings.dict())}): {list(vectorstore.embeddings.dict().items())[0]}")
 
-retriever = vectorstore.as_retriever(k=4) # number of chunks to retrieve
-docs = retriever.invoke("how does cover work?")
-
-print(f"Cover Docs ({len(docs)}): {docs[0].page_content[:50]}...")
+retriever = vectorstore.as_retriever(k=12) # number of chunks to retrieve
 
 chat = ChatPerplexity(temperature=0.2, model="pplx-70b-chat")
 history = ChatMessageHistory()
@@ -39,7 +41,12 @@ prompt = ChatPromptTemplate.from_messages([
   MessagesPlaceholder(variable_name="messages"),
 ])
 
-chain = create_stuff_documents_chain(chat, prompt)
+doc_chain = create_stuff_documents_chain(chat, prompt)
+chain = RunnablePassthrough.assign(
+    context=parse_retriever_input | retriever,
+).assign(
+    answer=doc_chain,
+)
 
 user_input = ""
 while user_input != "exit"  :
@@ -48,8 +55,9 @@ while user_input != "exit"  :
 
   response = chain.invoke({
     "messages": history.messages,
-    "context": docs,
   })
-  history.add_ai_message(response)
+  answer = response["answer"]
+  context = response["context"]
+  history.add_ai_message(answer)
 
-  print(colored(f"$: {response}", 'cyan'))
+  print(colored(f"$({len(context)}): {answer}", 'cyan'))
