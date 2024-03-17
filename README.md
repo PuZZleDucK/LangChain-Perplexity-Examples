@@ -5,6 +5,7 @@
 * 02-perplexity-chain.py           - Chain user input during a chat until the user exits
 * 03-perplexity-multi-character.py - An automated chat between two ai agents
 * 04-perplexity-rag-rules.py       - Chat with RAG backed ruled expert
+* 05-hugging-face-encoder.py       - Hugging Face encoding for RAG (perplexity chat)
 
 ## Dev setup
 ```

@@ -17,11 +17,11 @@ httpx==0.27.0
 idna==3.6
 jsonpatch==1.33
 jsonpointer==2.4
-langchain==0.1.12
-langchain-community==0.0.28
-langchain-core==0.1.31
-langchain-openai==0.0.8
-langchain-text-splitters==0.0.1
+langchain
+langchain-community
+langchain-core
+langchain-openai
+langchain-text-splitters
 langsmith==0.1.25
 marshmallow==3.21.1
 multidict==6.0.5
@@ -48,3 +48,4 @@ yarl==1.9.4
 termcolor
 chromadb
 beautifulsoup4
+sentence_transformers
